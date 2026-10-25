@@ -3,7 +3,7 @@ function model = fitPCA(Xtrain)
 % Xtrain: N-by-D finite double, with one observation per row.
 % model.mu: 1-by-D; model.W: D-by-q; q = rank(Xtrain-model.mu).
 % No labels, validation rows, standardization, or dimension tuning are used.
-% Requires Statistics and Machine Learning Toolbox (pca).
+% Uses base MATLAB SVD only; no Statistics toolbox is required.
 validateattributes(Xtrain, {'double'}, ...
     {'2d', 'real', 'finite', 'nonempty', 'nonsparse'}, mfilename, 'Xtrain');
 if size(Xtrain, 1) < 2
@@ -17,16 +17,16 @@ rankTolerance = max(size(A)) * eps(norm(A));
 if q == 0
     error('FaceLab:PCA:ZeroRank', 'Centered training data have zero numerical rank.');
 end
-[coeff, ~, latent, ~, explained, fittedMu] = pca(Xtrain, ...
-    'Algorithm', 'svd', 'Centered', true, 'Economy', true, 'Rows', 'all');
-if size(coeff, 2) < q
-    error('FaceLab:PCA:InsufficientDirections', ...
-        'pca returned fewer directions than the training numerical rank.');
-end
+% A = U*S*V'; right singular vectors are PCA directions.
+[~, S, coeff] = svd(A, 'econ');
+singularValues = diag(S);
+latent = singularValues.^2 / (size(Xtrain, 1) - 1);
+explained = 100 * singularValues.^2 / sum(singularValues.^2);
 model = struct();
 model.reducer = 'PCA';
 model.specVersion = 'v1.1';
-model.mu = fittedMu;
+model.mu = mu;
+model.algorithm = 'svd-econ';
 model.W = coeff(:, 1:q);
 model.q = q;
 model.rank = q;

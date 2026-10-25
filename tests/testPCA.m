@@ -24,6 +24,9 @@ X = fixture;
 m = fitPCA(X);
 [Z, seconds] = transformPCA(m, X);
 verifyEqual(testCase, m.q, 2);
+verifyEqual(testCase, m.algorithm, 'svd-econ');
+expectedLatent = svd(X-mean(X,1)).^2/(size(X,1)-1);
+verifyEqual(testCase, m.latent, expectedLatent(1:2), 'AbsTol', 1e-10);
 verifyEqual(testCase, m.q, rank(X-mean(X,1)));
 verifyEqual(testCase, m.rankTolerance, ...
     max(size(X))*eps(norm(X-mean(X,1))));
