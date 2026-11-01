@@ -22,33 +22,25 @@ assert(isnumeric(Ztrain) && ...
 % 3. 固定亂數種子
 rng(2026, 'twister');
 
-cv = cvpartition(ytrain, 'Holdout', 0.2);
-
-Zfit = Ztrain(training(cv), :);
-yfit = ytrain(training(cv));
-
-Zval = Ztrain(test(cv), :);
-yval = ytrain(test(cv));
-
-% 將設定集中管理，避免修改時漏掉
 hiddenUnits = 10;
 lambda = 0;
+
+
 
 % 建立並訓練模型
 timer = tic;
 
-model = fitcnet(Zfit, yfit, ...
+model = fitcnet(Ztrain, ytrain, ...
     'LayerSizes', hiddenUnits, ...
     'Activations', 'relu', ...
     'Standardize', true, ...
     'Lambda', lambda, ...
-    'IterationLimit', 1000, ...
-    'ValidationData', {Zval, yval}, ...
-    'ValidationPatience', 10);
+    'IterationLimit', 1000);
 
 % 記錄資訊
+
 info.fitSeconds = toc(timer);
-info.inputDim = size(Zfit, 2);
+info.inputDim = size(Ztrain, 2);
 info.hiddenUnits = hiddenUnits;
 info.lambda = lambda;
 info.classNames = string(model.ClassNames);
