@@ -33,7 +33,11 @@ F supplies separate five-fold and final-test result tables. Report course-requir
 
 ## Git workflow
 
-Use one role branch per person. Work on assigned files only. Before committing, inspect git status --short and git diff --check, stage named files, commit with a descriptive message, and push to the matching branch. Open a pull request to main and request review. Do not force-push or commit data.
+1. **Start from the latest team `main`.** Before starting or updating a task, run `git status --short` and fetch the team remote. Use `git fetch upstream` if `origin` is your fork, or `git fetch origin` if `origin` is the team repository. Fetch updates the remote-tracking ref. Start a new task branch from that ref, or merge the latest team `main` into your current task branch if continuing the same task. If your previous change is still missing from `main`, notify heetah and include the PR link or branch name and its status. Your working branch carries the complete project so you can test it. Its PR should contain only the changes assigned to you.
+2. **Ask AI to inspect the diff before pushing, then check its findings yourself.** Use `git status --short` to find new files, `git diff` for unstaged edits, and `git diff --cached` for staged edits. Stage named files and use `git diff --cached --check` before committing. After committing, ask AI to review the complete branch diff with `git diff --name-status upstream/main...HEAD` and `git diff upstream/main...HEAD`. Substitute `origin/main` if it is the team remote. If the PR targets a different branch, compare against that branch as well. Confirm the intended files in GitHub's **Files changed** tab.
+3. **Coordinate changes that cross role boundaries.** If another role's code or a shared interface needs to change, tell the owner which file or interface is affected, why the change is needed, and how it will be tested. Agree who will implement and review it before editing. If the two changes are delivered separately, link the dependent PRs so F knows which versions to test together.
+
+Push your task branch and open a PR to the team-designated base branch (usually `main`). Request review and record the MATLAB release, tested commit, and test result. Keep private data out of commits and leave shared branch history intact.
 
 ## AI use
 
