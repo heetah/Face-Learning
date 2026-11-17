@@ -1,0 +1,30 @@
+name: MATLAB integration
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'matlab/**'
+      - 'tests/**'
+      - '.github/workflows/matlab-integration.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-integration:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the proposed merge
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@f9e43010f1ae678f7cfa0542fe2a4f60f7d1ad8d # v3
+        with:
+          release: R2025b
+      - name: Check the fold-to-reducer interfaces
+        uses: matlab-actions/run-command@bfa857648f4895aa98a446fe41c85e0788421ed5 # v3
+        with:
+          command: assertSuccess(runtests('tests/testFoldReducerIntegration.m'))

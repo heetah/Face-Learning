@@ -94,7 +94,7 @@ All functions use rows as observations and columns as features.
 - X: N × 1024 double.
 - y: N × 1 categorical; category names man and woman.
 - sampleID and groupID: one value per row, in exactly the same order.
-- PCA: fitPCA(Xtrain) returns a model; transformPCA(model, X) returns N × q.
+- PCA: fitPCA(Xtrain, ytrain) returns a model; transformPCA(model, X) returns N × q.
 - LDA: fitLDA(Xtrain, ytrain) returns a model; transformLDA(model, X) returns N × 1.
 - Classifiers: fit on transformed training rows and ytrain; predict the validation rows and return predicted labels, continuous class scores, and the model's classNames.
 

@@ -64,7 +64,7 @@ A 和 F 一起確認類別標籤、groupID、報告用語；A 的方法說明也
 
 B 和 C 一起驗收兩個 reducer 介面和維度表。B 把 fitPCA/transformPCA 交給 D、E、F；和 D/E 用 synthetic Z 檢查分類器接線。B 的簡報、書面報告需說清楚 PCA 投影、q 的 rank 規則、各折 q 值與限制。
 
-可給 AI 的提示：我負責 B。依專案規格設計 fitPCA(Xtrain) 和 transformPCA(model,X)。先寫尺寸推導、fit/transform 不變條件和 rank 的容差來源，再給 MATLAB 程式及合成低秩矩陣測試。validation 使用 fit 保存的 mu/W；不要新增 q 門檻或調參流程。
+可給 AI 的提示：我負責 B。依專案規格設計 fitPCA(Xtrain, ytrain) 和 transformPCA(model,X)。先寫尺寸推導、fit/transform 不變條件和 rank 的容差來源，再給 MATLAB 程式及合成低秩矩陣測試。validation 使用 fit 保存的 mu/w；不要新增 q 門檻或調參流程。
 
 ## C｜Fisher LDA
 

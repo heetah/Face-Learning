@@ -1,0 +1,50 @@
+name: Audit role pull request
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/scripts/audit-role-pr*.mjs'
+      - '.github/workflows/audit-role-pr.yml'
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]
+  workflow_dispatch:
+    inputs:
+      pull_number:
+        description: Pull request number to check
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  self-test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the proposed audit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Run the policy tests
+        run: node --test .github/scripts/audit-role-pr.test.mjs
+
+  audit:
+    if: github.event_name == 'pull_request_target' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: role-audit-${{ github.event.pull_request.number || inputs.pull_number }}
+      cancel-in-progress: true
+    steps:
+      - name: Load the audit from the trusted main commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify PR authorship, target branch and paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUDIT_PULL_NUMBER: ${{ github.event.pull_request.number || inputs.pull_number }}
+        run: node .github/scripts/audit-role-pr.mjs "$AUDIT_PULL_NUMBER"
