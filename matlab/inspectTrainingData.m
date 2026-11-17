@@ -12,6 +12,7 @@ if isequal(trainRoot, 0)
 end
 
 files = dir(fullfile(trainRoot, '*.png'));
+files = files(~[files.isdir]);
 fileCount = numel(files);
 fprintf('PNG files found: %d\n', fileCount);
 
@@ -55,40 +56,19 @@ else
     fprintf('Group counts skipped because some names do not match the required pattern.\n');
 end
 
-all640RGB = true;
-dimensionSummary = zeros(0, 3);
+numberReadable = 0;
 for k = 1:fileCount
     try
-        info = imfinfo(fullfile(trainRoot, files(k).name));
-        isRGB = strcmpi(info.ColorType, 'truecolor');
-        dimensionSummary(end + 1, :) = [info.Height, info.Width, isRGB]; %#ok<AGROW>
-        if info.Height ~= 640 || info.Width ~= 640 || ~isRGB
-            all640RGB = false;
-        end
-    catch
-        all640RGB = false;
-        fprintf('At least one file could not be inspected.\n');
-    end
-end
-
-if ~isempty(dimensionSummary)
-    fprintf('Image dimensions (height x width): ');
-    sizes = unique(dimensionSummary(:, 1:2), 'rows');
-    for k = 1:size(sizes, 1)
-        fprintf('%d x %d', sizes(k, 1), sizes(k, 2));
-        if k < size(sizes, 1)
-            fprintf(', ');
+        readFaceImage(fullfile(trainRoot, files(k).name));
+        numberReadable = numberReadable + 1;
+    catch err
+        if ~strcmp(err.identifier, 'FaceLab:InvalidFaceImage')
+            rethrow(err);
         end
     end
-    fprintf('\n');
 end
 
-if all640RGB && size(dimensionSummary, 1) == fileCount
-    fprintf('Image check: all files are 640 x 640 RGB.\n');
-else
-    fprintf('Image check: some files are not 640 x 640 RGB or could not be read.\n');
-end
-
-fprintf('\nThis check only reads file metadata. It does not show, modify, save, or upload images.\n');
+fprintf('Images decoded as 640 x 640 8-bit RGB: %d / %d\n', numberReadable, fileCount);
+fprintf('This check displays aggregate counts and does not save images or features.\n');
 fprintf('Expected project count: 200 PNG files, with 100 man and 100 woman.\n');
 end
