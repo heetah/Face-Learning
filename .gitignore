@@ -1,0 +1,5 @@
+# Private FaceLab data and first-stage outputs must never enter public Git.
+*.mat
+fold_manifest.csv
+fold_counts.csv
+fold_config.json
