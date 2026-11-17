@@ -11,6 +11,10 @@ function [labels, scores, classNames] = predictMLP(model, Ztest)
 %   scores     : 各類別的分類分數
 %   classNames : 分數對應的類別名稱
 
+validateattributes(Ztest, {'double'}, ...
+    {'2d', 'real', 'finite', 'nonempty', 'nonsparse'}, ...
+    mfilename, 'Ztest');
+
 % 1. 取得模型需要的特徵數量
 inputDim = numel(model.PredictorNames);
 
