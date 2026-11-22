@@ -64,6 +64,18 @@ matlab/createFoldManifest.m；matlab/runCV.m；synthetic fold/leakage tests；pr
 
 提供給 AI 的內容只含函式介面、synthetic arrays、非識別尺寸、MATLAB release/toolbox 和已遮蔽錯誤訊息。不要上傳臉部影像、X 特徵、sample-level predictions、原始檔名、私人路徑或憑證。AI 產生的 code 要先由組員 review，再在指定 MATLAB 環境執行。
 
+## 五折整合入口
+
+`runCV.m` 使用已整合的 B–E 模組執行四種方法；F 分支需先同步 main 中的這些模組。
+
+```matlab
+addpath('matlab');
+assertSuccess(runtests('tests/testRunCV.m'));
+results = runCV(matPath, manifestPath, outputFolder);
+```
+
+輸出指標 CSV、ROC 圖與執行紀錄。`outputFolder` 請指定私人位置下尚不存在的資料夾。
+
 ## 官方參考
 
 https://www.mathworks.com/help/stats/cvpartition.html
